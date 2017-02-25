@@ -19,4 +19,3 @@ deployment:
     branch: [master]
     commands:
       - npm run report-coverage
-      - DEBUG=condition npm run semantic-release || true

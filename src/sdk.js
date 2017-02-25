@@ -6,6 +6,10 @@ class SDK {
   static set key(val) { ApiSDK.OrgToken = val }
 }
 
+if(process && process.env && process.env.CRYSTAL_KEY) {
+  SDK.key = process.env.CRYSTAL_KEY
+}
+
 SDK.Profile = Profile
 
 module.exports = SDK
