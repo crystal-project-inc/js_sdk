@@ -4,26 +4,42 @@
 </head>
 <body>
   <script>
-    CrystalSDK.key = "YourOrgKey"
+    CrystalSDK.key = "YourOrgToken"
 
     CrystalSDK.Profile.search({
       first_name: "Drew",
       last_name: "D'Agostino",
-      email: "drew@crystalknows.com"
-    })
+      email: "drew@crystalknows.com",
+      company_name: "Crystal",
+      location: "Nashville, TN",
+      text_sample: "I, Drew, the founder of Crystal, think that ...",
+      text_type: "various"
+    }, 30) // Timeout in seconds. Default: 30
       .then((profile) => {
         console.log("Profile found!")
         console.log("First Name:", profile.info.first_name)
         console.log("Last Name:", profile.info.last_name)
         console.log("Confidence:", profile.info.confidence)
         console.log("Overview:", profile.info.overview)
+
         console.log("Recommendations:", profile.recommendations)
 
       })
+      .catch(CrystalSDK.Profile.NotFoundError, (err) => {
+        console.log("The personality profile was not found")
+      })
+      .catch(CrystalSDK.Profile.NotFoundYetError, (err) => {
+        console.log("The personality profile was not found in time limit")
+        console.log("Asynchronous Request ID:", err.request.id)
+      })
+      .catch(CrystalSDK.Profile.NotAuthedError, (err) => {
+        console.log("Organization token was invalid:", err.token)
+      })
+      .catch(CrystalSDK.Profile.RateLimitHitError, (err) => {
+        console.log("Organiation hit the allowed rate limit")
+      })
       .catch((err) => {
-        console.log("SOMETHING")
-        console.log("Unexpected Error:", err)
-
+        console.log(err)
       })
   </script>
 </body>

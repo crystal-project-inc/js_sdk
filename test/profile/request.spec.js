@@ -250,8 +250,11 @@ describe('ProfileSDK.RequestSDK', () => {
           .returns(Promise.resolve('processing'))
       })
 
-      it('should reject', (done) => {
-        req.didFinish().catch(done)
+      it('should reject with NotFinishedError', (done) => {
+        req.didFinish().catch((err) => {
+          expect(err).to.be.an.instanceOf(ProfileSDK.Request.NotFinishedError)
+          done()
+        })
       })
     })
 
@@ -319,7 +322,10 @@ describe('ProfileSDK.RequestSDK', () => {
         })
 
         it('should reject', (done) => {
-          req.didFindProfile().catch(done)
+          req.didFindProfile().catch((err) => {
+            expect(err).to.be.an.instanceOf(ProfileSDK.Request.RequestStatusError)
+            done()
+          })
         })
       })
 
@@ -333,7 +339,10 @@ describe('ProfileSDK.RequestSDK', () => {
         })
 
         it('should reject', (done) => {
-          req.didFindProfile().catch(done)
+          req.didFindProfile().catch((err) => {
+            expect(err).to.be.an.instanceOf(ProfileSDK.Request.ProfileInfoError)
+            done()
+          })
         })
       })
 

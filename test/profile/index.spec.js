@@ -55,10 +55,12 @@ describe('ProfileSDK', () => {
     context('ran out of time', () => {
       it('should throw NotFoundYetError', (done) => {
         let mock = sinon.mock(req)
-        mock.expects("didFinish").returns(Promise.reject())
+        mock.expects("didFinish")
+          .returns(Promise.reject(new ProfileSDK.Request.NotFinishedError()))
 
-        ProfileSDK.search({}, 0.01).catch((resp) => {
-          expect(resp).to.eql(ProfileSDK.NotFoundYetError)
+        ProfileSDK.search({}, 0.01).catch((err) => {
+          expect(err).to.be.an.instanceOf(ProfileSDK.NotFoundYetError)
+          expect(err.request).to.be.an.instanceOf(ProfileSDK.Request)
           done()
         })
       })
@@ -70,10 +72,10 @@ describe('ProfileSDK', () => {
         ProfileSDK.Request.fromSearch.restore()
         mock.expects("fromSearch")
           .once()
-          .returns(Promise.reject('SomeError'))
+          .returns(Promise.reject(new Error('SomeError')))
 
         ProfileSDK.search({}).catch((resp) => {
-          expect(resp).to.eql('SomeError')
+          expect(resp).to.eql(new Error('SomeError'))
           done()
         })
       })
@@ -84,10 +86,10 @@ describe('ProfileSDK', () => {
         let mock = sinon.mock(req)
         mock.expects("didFinish")
           .once()
-          .returns(Promise.reject('SomeFinishError'))
+          .returns(Promise.reject(new Error('SomeFinishError')))
 
         ProfileSDK.search({}).catch((resp) => {
-          expect(resp).to.eql('SomeFinishError')
+          expect(resp).to.eql(new Error('SomeFinishError'))
           done()
         })
       })
@@ -99,10 +101,10 @@ describe('ProfileSDK', () => {
         mock.expects('didFinish').once().returns(Promise.resolve())
         mock.expects("didFindProfile")
           .once()
-          .returns(Promise.reject())
+          .returns(Promise.reject(new Error()))
 
         ProfileSDK.search({}).catch((resp) => {
-          expect(resp).to.eql(ProfileSDK.NotFoundError)
+          expect(resp).to.be.an.instanceOf(ProfileSDK.NotFoundError)
           done()
         })
       })
@@ -115,10 +117,10 @@ describe('ProfileSDK', () => {
         mock.expects('didFindProfile').once().returns(Promise.resolve())
         mock.expects("profileInfo")
           .once()
-          .returns(Promise.reject('SomeError'))
+          .returns(Promise.reject(new Error('SomeError')))
 
         ProfileSDK.search({}).catch((resp) => {
-          expect(resp).to.eql('SomeError')
+          expect(resp).to.eql(new Error('SomeError'))
           done()
         })
       })
@@ -133,15 +135,24 @@ describe('ProfileSDK', () => {
 
       context('ApiSDK threw error while processing request', () => {
         context('error is 401', () => {
+          let origToken
           beforeEach(() => {
             let error = {statusCode: 401}
             sandbox.stub(ApiSDK, 'makeRequest')
               .returns(Promise.reject(error))
+
+            origToken = ApiSDK.OrgToken
+            ApiSDK.OrgToken = 'MyToken'
+          })
+
+          afterEach(() => {
+            ApiSDK.OrgToken = origToken
           })
 
           it('should throw NotAuthedError', (done) => {
             ProfileSDK.search({}).catch((err) => {
-              expect(err).to.eql(ProfileSDK.NotAuthedError)
+              expect(err).to.be.an.instanceOf(ProfileSDK.NotAuthedError)
+              expect(err.token).to.eql('MyToken')
               done()
             })
           })
@@ -156,7 +167,7 @@ describe('ProfileSDK', () => {
 
           it('should throw NotFoundError', (done) => {
             ProfileSDK.search({}).catch((err) => {
-              expect(err).to.eql(ProfileSDK.NotFoundError)
+              expect(err).to.be.an.instanceOf(ProfileSDK.NotFoundError)
               done()
             })
           })
@@ -165,12 +176,12 @@ describe('ProfileSDK', () => {
         context('error is unexpected', () => {
           beforeEach(() => {
             sandbox.stub(ApiSDK, 'makeRequest')
-              .returns(Promise.reject('SomeError'))
+              .returns(Promise.reject(new Error('SomeError')))
           })
 
           it('should not suppress error', (done) => {
             ProfileSDK.search({}).catch((err) => {
-              expect(err).to.eql('SomeError')
+              expect(err).to.eql(new Error('SomeError'))
               done()
             })
           })
@@ -188,7 +199,7 @@ describe('ProfileSDK', () => {
 
         it('should throw NotAuthedError', (done) => {
           ProfileSDK.search({}).catch((err) => {
-            expect(err).to.eql(ProfileSDK.NotAuthedError)
+            expect(err).to.be.an.instanceOf(ProfileSDK.NotAuthedError)
             done()
           })
         })
@@ -203,7 +214,7 @@ describe('ProfileSDK', () => {
 
         it('should throw RateLimitHitError', (done) => {
           ProfileSDK.search({}).catch((err) => {
-            expect(err).to.eql(ProfileSDK.RateLimitHitError)
+            expect(err).to.be.an.instanceOf(ProfileSDK.RateLimitHitError)
             done()
           })
         })
@@ -212,12 +223,12 @@ describe('ProfileSDK', () => {
       context('error is unexpected', () => {
         beforeEach(() => {
           sandbox.stub(ApiSDK, 'makeRequest')
-            .returns(Promise.reject('SomeError'))
+            .returns(Promise.reject(new Error('SomeError')))
         })
 
         it('should not suppress error', (done) => {
           ProfileSDK.search({}).catch((err) => {
-            expect(err).to.eql('SomeError')
+            expect(err).to.eql(new Error('SomeError'))
             done()
           })
         })

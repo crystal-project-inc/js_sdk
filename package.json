@@ -1,6 +1,6 @@
 {
   "name": "crystal_sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Javascript SDK version of the Crystal Connect API",
   "main": "dist/sdk.js",
   "files": [
@@ -9,7 +9,7 @@
   "scripts": {
     "prebuild": "rm -rf dist && mkdir dist",
     "build": "babel src -d dist",
-    "build-min": "npm run prebuild && browserify src/sdk.js -o dist/sdk.min.js --standalone CrystalSDK -p browserify-derequire -t [ babelify --presets [ es2015 ] ] -g uglifyify",
+    "build-min": "npm run prebuild && browserify src/sdk.js -o dist/sdk.min.js --standalone CrystalSDK -p browserify-derequire -t [ babelify --presets [ es2015 ] ]",
     "prepublish": "npm run test && npm run check-coverage && npm run build-min && npm run build",
     "check-coverage": "istanbul check-coverage --statements 70 --branches 50 --functions 70 --lines 70",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
@@ -34,10 +34,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bluebird": "^3.4.7",
-    "es6-promise": "3.0.2",
-    "object-assign": "4.0.1",
     "request": "^2.79.0",
-    "request-promise": "^4.1.1"
+    "request-promise": "^4.1.1",
+    "create-error": "^0.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
