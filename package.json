@@ -1,7 +1,7 @@
 {
-  "name": "crystal-sdk",
+  "name": "crystal_sdk",
   "version": "1.0.0",
-  "description": "SDK for Crystal API",
+  "description": "Javascript SDK version of the Crystal Connect API",
   "main": "dist/sdk.js",
   "files": [
     "dist"
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/crystal-project-inc/sdk.git"
+    "url": "https://github.com/crystal-project-inc/js_sdk.git"
   },
   "keywords": [
     "crystal",
@@ -26,11 +26,11 @@
     "personality",
     "sdk"
   ],
-  "author": "Crystal Dev Team <developer@crystalknows.com> (https://www.crystalknows.com/)",
+  "author": "Crystal Dev Team <hello@crystalknows.com> (https://www.crystalknows.com/)",
   "bugs": {
-    "url": "https://github.com/crystal-project-inc/sdk/issues"
+    "url": "https://github.com/crystal-project-inc/js_sdk/issues"
   },
-  "homepage": "https://github.com/crystal-project-inc/sdk#readme",
+  "homepage": "https://github.com/crystal-project-inc/js_sdk#readme",
   "license": "Apache-2.0",
   "dependencies": {
     "bluebird": "^3.4.7",
