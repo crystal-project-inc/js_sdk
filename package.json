@@ -1,0 +1,73 @@
+{
+  "name": "crystal-sdk",
+  "version": "0.0.0-semantically-released",
+  "description": "SDK for Crystal API",
+  "main": "dist/sdk.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prebuild": "rm -rf dist && mkdir dist",
+    "build": "babel src -d dist",
+    "build-min": "npm run prebuild && browserify src/sdk.js -o dist/sdk.min.js --standalone CrystalSDK -p browserify-derequire -t [ babelify --presets [ es2015 ] ] -g uglifyify",
+    "commit": "git-cz",
+    "check-coverage": "istanbul check-coverage --statements 70 --branches 50 --functions 70 --lines 70",
+    "report-coverage": "cat ./coverage/lcov.info | codecov",
+    "test": "find ./test -name '*.spec.js' | xargs istanbul cover _mocha -- -R spec --compilers js:babel-register",
+    "test:watch": "find ./test -name '*.spec.js' | xargs mocha -w test/**/*.spec.js --compilers js:babel-register",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crystal-project-inc/sdk.git"
+  },
+  "keywords": [
+    "crystal",
+    "crystalknows",
+    "personality",
+    "sdk"
+  ],
+  "author": "Crystal Dev Team <developer@crystalknows.com> (https://www.crystalknows.com/)",
+  "bugs": {
+    "url": "https://github.com/crystal-project-inc/sdk/issues"
+  },
+  "homepage": "https://github.com/crystal-project-inc/sdk#readme",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bluebird": "^3.4.7",
+    "es6-promise": "3.0.2",
+    "object-assign": "4.0.1",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.9.0",
+    "babel-plugin-transform-es2015-modules-umd": "6.6.0",
+    "babel-plugin-transform-proto-to-assign": "6.6.0",
+    "babel-preset-es2015": "6.5.0",
+    "babel-register": "6.5.2",
+    "babelify": "7.2.0",
+    "browserify": "13.0.0",
+    "browserify-derequire": "0.9.4",
+    "chai": "3.5.0",
+    "codecov.io": "0.1.6",
+    "commitizen": "2.5.0",
+    "condition-circle": "1.2.0",
+    "cz-conventional-changelog": "^1.1.5",
+    "ghooks": "1.0.3",
+    "istanbul": "1.0.0-alpha.2",
+    "mocha": "2.4.5",
+    "nock": "7.2.2",
+    "semantic-release": "^4.3.5",
+    "sinon": "1.17.3",
+    "uglifyify": "3.0.1"
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "release": {
+    "verifyConditions": "condition-circle"
+  }
+}

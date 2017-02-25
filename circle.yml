@@ -1,0 +1,22 @@
+machine:
+  node:
+    version: 7.2.0
+
+dependencies:
+  override:
+    - npm i -g npm@^3.10.9
+    - npm prune
+    - npm install
+
+test:
+  override:
+    - npm run test
+    - npm run check-coverage
+    - npm run build
+
+deployment:
+  default:
+    branch: [master]
+    commands:
+      - npm run report-coverage
+      - DEBUG=condition npm run semantic-release || true
