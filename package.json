@@ -10,7 +10,7 @@
     "prebuild": "rm -rf dist && mkdir dist",
     "build": "babel src -d dist",
     "build-min": "npm run prebuild && browserify src/sdk.js -o dist/sdk.min.js --standalone CrystalSDK -p browserify-derequire -t [ babelify --presets [ es2015 ] ] -g uglifyify",
-    "prepublish": "npm run test && npm run build",
+    "prepublish": "npm run test && npm run check-coverage && npm run build-min && npm run build",
     "check-coverage": "istanbul check-coverage --statements 70 --branches 50 --functions 70 --lines 70",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
     "test": "find ./test -name '*.spec.js' | xargs istanbul cover _mocha -- -R spec --compilers js:babel-register",
