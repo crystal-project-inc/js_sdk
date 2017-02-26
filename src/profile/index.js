@@ -1,8 +1,8 @@
 import BaseSDK from '../base'
 import ApiSDK from '../api'
 import RequestSDK from './request'
+import * as Errors from './errors'
 import Promise from 'bluebird'
-import createError from 'create-error'
 
 const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -43,7 +43,7 @@ class ProfileSDK extends BaseSDK {
                 if(err instanceof ProfileSDK.Request.NotFinishedError) {
                   return sleep(2000).then(checkStatus)
                 } else {
-                  return Promise.reject(err)
+                  return reject(err)
                 }
               })
               .then(() => {
@@ -60,34 +60,15 @@ class ProfileSDK extends BaseSDK {
       })
 
     return Promise.race([searchPromise, timedOut])
-      .catch((err) => {
-        switch(err.statusCode) {
-          case 401:
-            throw new ProfileSDK.NotAuthedError(
-              `Org Token Invalid: ${ApiSDK.OrgToken}`,
-              {token: ApiSDK.OrgToken}
-            )
-          case 404:
-            throw new ProfileSDK.NotFoundError()
-          case 429:
-            throw new ProfileSDK.RateLimitHitError()
-          default:
-            throw err
-        }
-      })
   }
 }
 
 ProfileSDK.Request = RequestSDK
 
-ProfileSDK.InitialRequestTimeoutError = createError('CrystalSDK.Profile.InitialRequestTimeoutError')
-
-ProfileSDK.NotFoundError = createError('CrystalSDK.Profile.NotFoundError')
-
-ProfileSDK.NotFoundYetError = createError('CrystalSDK.Profile.NotFoundYetError')
-
-ProfileSDK.NotAuthedError = createError('CrystalSDK.Profile.NotAuthedError')
-
-ProfileSDK.RateLimitHitError = createError('CrystalSDK.Profile.RateLimitHitError')
+ProfileSDK.InitialRequestTimeoutError = Errors.InitialRequestTimeoutError
+ProfileSDK.NotFoundError = Errors.NotFoundError
+ProfileSDK.NotFoundYetError = Errors.NotFoundYetError
+ProfileSDK.NotAuthedError = Errors.NotAuthedError
+ProfileSDK.RateLimitHitError = Errors.RateLimitHitError
 
 export default ProfileSDK

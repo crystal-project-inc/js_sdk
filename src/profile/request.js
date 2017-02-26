@@ -1,5 +1,6 @@
 import BaseSDK from '../base'
 import ApiSDK from '../api'
+import * as Errors from './errors'
 import Promise from 'bluebird'
 import createError from 'create-error'
 
@@ -15,6 +16,23 @@ class ProfileRequestSDK extends BaseSDK {
       .then((resp) => {
         return new ProfileRequestSDK(resp.body.request_id)
       })
+      .catch(ProfileRequestSDK.checkError)
+  }
+
+  static checkError(err) {
+    switch(err.statusCode) {
+      case 401:
+        throw new Errors.NotAuthedError(
+          `Org Token Invalid: ${ApiSDK.OrgToken}`,
+          {token: ApiSDK.OrgToken}
+        )
+      case 404:
+        throw new Errors.NotFoundError()
+      case 429:
+        throw new Errors.RateLimitHitError()
+      default:
+        throw err
+    }
   }
 
   fetchRequestInfo() {
@@ -29,6 +47,7 @@ class ProfileRequestSDK extends BaseSDK {
 
         return body
       })
+      .catch(ProfileRequestSDK.checkError)
   }
 
   fetchStatus() {

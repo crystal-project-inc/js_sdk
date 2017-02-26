@@ -427,4 +427,33 @@ describe('ProfileSDK.RequestSDK', () => {
       })
     })
   })
+
+  describe('.checkError', () => {
+    it('should raise NotAuthedError if statusCode is 401', (done) => {
+      try {
+        ProfileSDK.Request.checkError({statusCode: 401})
+      } catch (err) {
+        expect(err instanceof ProfileSDK.NotAuthedError).to.eql(true)
+        done()
+      }
+    })
+
+    it('should raise NotFoundError if statusCode is 404', (done) => {
+      try {
+        ProfileSDK.Request.checkError({statusCode: 404})
+      } catch (err) {
+        expect(err instanceof ProfileSDK.NotFoundError).to.eql(true)
+        done()
+      }
+    })
+
+    it('should raise RateLimitHitError if statusCode is 429', (done) => {
+      try {
+        ProfileSDK.Request.checkError({statusCode: 429})
+      } catch (err) {
+        expect(err instanceof ProfileSDK.RateLimitHitError).to.eql(true)
+        done()
+      }
+    })
+  })
 })
