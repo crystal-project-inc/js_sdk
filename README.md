@@ -93,7 +93,7 @@ import Promise from 'bluebird'
 import CrystalSDK from 'crystal_sdk'
 
 # Decided on retry limit and time between polls
-const PAUSE_IN_SECONDS = 3
+const PAUSE_IN_SECS = 3
 const TIME_LIMIT = 30
 
 # Set your Organization Access Token
