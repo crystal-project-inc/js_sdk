@@ -175,16 +175,15 @@ CrystalSDK.Profile.Request.fromSearch(query)
 const savedReq = new CrystalSDK.Profile.Request(profileRequestID)
 
 savedReq.didFinish()
-  .then((finished) => finished ? savedReq.didFindProfile() : Promise.reject())
-  .then((foundProfile) => (
-    foundProfile ?
-    profile :
-    Promise.reject(new CrystalSDK.Profile.NotFoundError())
+  .then((finished) => (
+    finished ?
+    savedReq.profileInfo() :
+    Promise.reject('Request not finished')
   ))
   .then((profile) => {
     ...
   })
-  .catch(() => console.log("No profile found"))
+  .catch((err) => console.log("No profile found:", err))
 ```
 
 We try and store your request for a few days after the request has been started. Your Request ID should work when you try to pull information from it for at least that period of time!
