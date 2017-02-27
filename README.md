@@ -38,10 +38,10 @@ Here's how you use it:
 ```js
 import CrystalSDK from 'crystal_sdk'
 
-# Set your Organization Access Token
+// Set your Organization Access Token
 CrystalSDK.key = "OrgApiKey"
 
-# Fetch a profile
+// Fetch a profile
 CrystalSDK.Profile.search({
   first_name: "Drew",
   last_name: "D'Agostino",
@@ -126,7 +126,7 @@ const searchPromise = CrystalSDK.Profile.Request.fromSearch(query)
   .then(poll)
   .then((pd) => new CrystalSDK.Profile(pd.info, pd.recommendations))
 
-# Wait for the response or a timeout
+// Wait for the response or a timeout
 Promise.race([timedOut, searchPromise])
   .then((profile) => {
     ...
@@ -144,17 +144,17 @@ This option is great if you want information as fast as possible while keeping o
 Sometimes, it isn't important to have the profile information immediately. Especially when dealing with larger jobs or passive data enrichment. In that case, we allow you to save the Request ID and pull information from the request at a later time via this ID.
 
 ```js
-# This example uses bluebird promises
+// This example uses bluebird promises
 import Promise from 'bluebird'
 import CrystalSDK from 'crystal_sdk'
 
-# Set your Organization Access Token
+// Set your Organization Access Token
 CrystalSDK.key = "OrgToken"
 
-# Send the request to Crystal
+// Send the request to Crystal
 const query = { first_name: "Drew", ... }
 
-# Pull out the Profile Request ID (string)
+// Pull out the Profile Request ID (string)
 
 CrystalSDK.Profile.Request.fromSearch(query)
   .then((request) => {
@@ -166,7 +166,7 @@ CrystalSDK.Profile.Request.fromSearch(query)
     ...
   })
 
-# Later, pull up the Request ID and pull information about it
+// Later, pull up the Request ID and pull information about it
 const savedReq = new CrystalSDK.Profile.Request(profileRequestID)
 
 savedReq.didFinish()
