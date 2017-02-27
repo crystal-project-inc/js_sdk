@@ -90,6 +90,7 @@ The option we use internally in the SDK, is to poll for request information peri
 ```js
 # This example uses bluebird promises
 import Promise from 'bluebird'
+import CrystalSDK from 'crystal_sdk'
 
 # Decided on retry limit and time between polls
 const PAUSE_IN_SECONDS = 3
@@ -109,11 +110,12 @@ const sleep = (ms) => {
 }
 
 # Prepare the polling logic
-const poll = (searchRequest) => {
-  return searchRequest.didFinish()
+const poll = (searchReq) => {
+  return searchReq.didFinish()
     .then((finished) => (
-      if(finished) return searchRequest.profileInfo()
-      else return sleep(PAUSE_IN_SECONDS * 1000).then(() => poll(searchRequest))
+      finished ?
+      searchReq.profileInfo() :
+      sleep(PAUSE_IN_SECS * 1000).then(() => poll(searchReq))
     ))
 }
 
@@ -144,6 +146,7 @@ Sometimes, it isn't important to have the profile information immediately. Espec
 ```js
 # This example uses bluebird promises
 import Promise from 'bluebird'
+import CrystalSDK from 'crystal_sdk'
 
 # Set your Organization Access Token
 CrystalSDK.key = "OrgToken"
