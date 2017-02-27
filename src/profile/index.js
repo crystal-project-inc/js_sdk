@@ -8,6 +8,8 @@ const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const POLL_PAUSE_IN_SECONDS = 2
+
 class ProfileSDK extends BaseSDK {
   constructor(info, recommendations) {
     super()
@@ -17,6 +19,8 @@ class ProfileSDK extends BaseSDK {
   }
 
   static search(query, timeout = 30) {
+    const PAUSE_IN_SECS = 3
+
     let req
     let timedOut = new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -27,37 +31,25 @@ class ProfileSDK extends BaseSDK {
           )
 
           reject(error)
-        }
-        else reject(new ProfileSDK.InitialRequestTimeoutError())
+        } else reject(new ProfileSDK.InitialRequestTimeoutError())
       }, timeout * 1000)
     })
 
+    const poll = (searchReq) => {
+      req = searchReq
+
+      return searchReq.didFinish()
+        .then((finished) => (
+          finished ?
+          searchReq.profileInfo() :
+          sleep(PAUSE_IN_SECS * 1000).then(() => poll(searchReq))
+        ))
+    }
+
+
     const searchPromise = ProfileSDK.Request.fromSearch(query)
-      .then((searchRequest) => {
-        req = searchRequest
-
-        return new Promise((resolve, reject) => {
-          const checkStatus = () => {
-            searchRequest.didFinish()
-              .catch((err) => {
-                if(err instanceof ProfileSDK.Request.NotFinishedError) {
-                  return sleep(2000).then(checkStatus)
-                } else {
-                  return reject(err)
-                }
-              })
-              .then(() => {
-                return searchRequest.didFindProfile()
-                  .catch(() => reject(new ProfileSDK.NotFoundError()))
-              })
-              .then(() => searchRequest.profileInfo())
-              .then((pd) => resolve(new ProfileSDK(pd.info, pd.recommendations)))
-              .catch(reject)
-          }
-
-          checkStatus()
-        })
-      })
+      .then(poll)
+      .then((pd) => new ProfileSDK(pd.info, pd.recommendations))
 
     return Promise.race([searchPromise, timedOut])
   }

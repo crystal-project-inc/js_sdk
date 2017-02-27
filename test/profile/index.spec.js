@@ -37,8 +37,7 @@ describe('ProfileSDK', () => {
 
     it('should utilize ProfileSDK.Request', (done) => {
       let mock = sinon.mock(req)
-      mock.expects("didFinish").once().returns(Promise.resolve())
-      mock.expects("didFindProfile").once().returns(Promise.resolve())
+      mock.expects("didFinish").once().returns(Promise.resolve(true))
       mock.expects("profileInfo").once().returns(Promise.resolve({
         info: 'some_info',
         recommendations: 'some_recs'
@@ -56,11 +55,12 @@ describe('ProfileSDK', () => {
       it('should throw NotFoundYetError', (done) => {
         let mock = sinon.mock(req)
         mock.expects("didFinish")
-          .returns(Promise.reject(new ProfileSDK.Request.NotFinishedError()))
+          .returns(Promise.resolve(false))
 
         ProfileSDK.search({}, 0.01).catch((err) => {
           expect(err).to.be.an.instanceOf(ProfileSDK.NotFoundYetError)
           expect(err.request).to.be.an.instanceOf(ProfileSDK.Request)
+          expect(err.request.id).to.eql(req.id)
           done()
         })
       })
@@ -95,26 +95,10 @@ describe('ProfileSDK', () => {
       })
     })
 
-    context('request.didFindProfile rejected', () => {
-      it('should throw NotFoundError', (done) => {
-        let mock = sinon.mock(req)
-        mock.expects('didFinish').once().returns(Promise.resolve())
-        mock.expects("didFindProfile")
-          .once()
-          .returns(Promise.reject(new Error()))
-
-        ProfileSDK.search({}).catch((resp) => {
-          expect(resp).to.be.an.instanceOf(ProfileSDK.NotFoundError)
-          done()
-        })
-      })
-    })
-
     context('request.profileInfo threw error', () => {
       it('should throw error', (done) => {
         let mock = sinon.mock(req)
-        mock.expects('didFinish').once().returns(Promise.resolve())
-        mock.expects('didFindProfile').once().returns(Promise.resolve())
+        mock.expects('didFinish').once().returns(Promise.resolve(true))
         mock.expects("profileInfo")
           .once()
           .returns(Promise.reject(new Error('SomeError')))

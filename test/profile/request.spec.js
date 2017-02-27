@@ -226,8 +226,11 @@ describe('ProfileSDK.RequestSDK', () => {
           .returns(Promise.resolve('complete'))
       })
 
-      it('should resolve', (done) => {
-        req.didFinish().then(done)
+      it('should resolve to true', (done) => {
+        req.didFinish().then((finished) => {
+          expect(finished).to.eql(true)
+          done()
+        })
       })
     })
 
@@ -238,8 +241,11 @@ describe('ProfileSDK.RequestSDK', () => {
           .returns(Promise.resolve('error'))
       })
 
-      it('should resolve', (done) => {
-        req.didFinish().then(done)
+      it('should resolve to true', (done) => {
+        req.didFinish().then((finished) => {
+          expect(finished).to.eql(true)
+          done()
+        })
       })
     })
 
@@ -250,15 +256,45 @@ describe('ProfileSDK.RequestSDK', () => {
           .returns(Promise.resolve('processing'))
       })
 
-      it('should reject with NotFinishedError', (done) => {
-        req.didFinish().catch((err) => {
-          expect(err).to.be.an.instanceOf(ProfileSDK.Request.NotFinishedError)
+      it('should resolve with false', (done) => {
+        req.didFinish().then((finished) => {
+          expect(finished).to.eql(false)
           done()
         })
       })
     })
 
-    context('#fetchStatus threw an error', () => {
+    context('#fetchStatus threw NotFoundError', () => {
+      beforeEach(() => {
+        let mock = sinon.mock(req)
+        mock.expects('fetchStatus').once()
+          .returns(Promise.reject(new ProfileSDK.NotFoundError()))
+      })
+
+      it('should resolve to true', (done) => {
+        req.didFinish().then((finished) => {
+          expect(finished).to.eql(true)
+          done()
+        })
+      })
+    })
+
+    context('#fetchStatus threw NotAuthedError', () => {
+      beforeEach(() => {
+        let mock = sinon.mock(req)
+        mock.expects('fetchStatus').once()
+          .returns(Promise.reject(new ProfileSDK.NotAuthedError()))
+      })
+
+      it('should not suppress it', (done) => {
+        req.didFinish().catch((err) => {
+          expect(err).to.be.an.instanceof(ProfileSDK.NotAuthedError)
+          done()
+        })
+      })
+    })
+
+    context('#fetchStatus threw an unexpected error', () => {
       beforeEach(() => {
         let mock = sinon.mock(req)
         mock.expects('fetchStatus').once()
@@ -275,7 +311,38 @@ describe('ProfileSDK.RequestSDK', () => {
   })
 
   describe('#didFindProfile', () => {
-    context('#didFinish threw an error', () => {
+
+    context('#didFinish threw a NotFoundError', () => {
+      beforeEach(() => {
+        let mock = sinon.mock(req)
+        mock.expects('didFinish').once()
+          .returns(Promise.reject(new ProfileSDK.NotFoundError()))
+      })
+
+      it('should resolve to false', (done) => {
+        req.didFindProfile().then((foundProfile) => {
+          expect(foundProfile).to.eql(false)
+          done()
+        })
+      })
+    })
+
+    context('#didFinish threw a NotAuthedError', () => {
+      beforeEach(() => {
+        let mock = sinon.mock(req)
+        mock.expects('didFinish').once()
+          .returns(Promise.reject(new ProfileSDK.NotAuthedError()))
+      })
+
+      it('should not suppress it', (done) => {
+        req.didFindProfile().catch((err) => {
+          expect(err).to.be.an.instanceof(ProfileSDK.NotAuthedError)
+          done()
+        })
+      })
+    })
+
+    context('#didFinish threw an unexpected error', () => {
       beforeEach(() => {
         let mock = sinon.mock(req)
         mock.expects('didFinish').once()
@@ -290,14 +357,14 @@ describe('ProfileSDK.RequestSDK', () => {
       })
     })
 
-    context('#didFinish resolved', () => {
+    context('#didFinish resolved to true', () => {
       beforeEach(() => {
         let mock = sinon.mock(req)
         mock.expects('didFinish').once()
-          .returns(Promise.resolve())
+          .returns(Promise.resolve(true))
       })
 
-      context('#fetchRequestInfo threw an error', () => {
+      context('#fetchRequestInfo threw an unexpected error', () => {
         beforeEach(() => {
           let mock = sinon.mock(req)
           mock.expects('fetchRequestInfo').once()
@@ -321,9 +388,9 @@ describe('ProfileSDK.RequestSDK', () => {
             .returns(Promise.resolve(info))
         })
 
-        it('should reject', (done) => {
-          req.didFindProfile().catch((err) => {
-            expect(err).to.be.an.instanceOf(ProfileSDK.Request.RequestStatusError)
+        it('should resolve to false', (done) => {
+          req.didFindProfile().then((profileFound) => {
+            expect(profileFound).to.eql(false)
             done()
           })
         })
@@ -338,9 +405,9 @@ describe('ProfileSDK.RequestSDK', () => {
             .returns(Promise.resolve(info))
         })
 
-        it('should reject', (done) => {
-          req.didFindProfile().catch((err) => {
-            expect(err).to.be.an.instanceOf(ProfileSDK.Request.ProfileInfoError)
+        it('should resolve to false', (done) => {
+          req.didFindProfile().then((profileFound) => {
+            expect(profileFound).to.eql(false)
             done()
           })
         })
@@ -356,8 +423,11 @@ describe('ProfileSDK.RequestSDK', () => {
             .returns(Promise.resolve(info))
         })
 
-        it('should reject', (done) => {
-          req.didFindProfile().then(done)
+        it('should resolve to true', (done) => {
+          req.didFindProfile().then((profileFound) => {
+            expect(profileFound).to.eql(true)
+            done()
+          })
         })
       })
     })

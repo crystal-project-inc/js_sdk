@@ -2,7 +2,6 @@ import BaseSDK from '../base'
 import ApiSDK from '../api'
 import * as Errors from './errors'
 import Promise from 'bluebird'
-import createError from 'create-error'
 
 class ProfileRequestSDK extends BaseSDK {
   constructor(id) {
@@ -58,20 +57,19 @@ class ProfileRequestSDK extends BaseSDK {
   didFinish() {
     return this.fetchStatus()
       .then((status) => {
-        if(status == 'complete' || status == 'error') return Promise.resolve()
-        else return Promise.reject(new ProfileRequestSDK.NotFinishedError())
+        if(status == 'complete' || status == 'error') return true
+        else return false
       })
+      .catch((err) => err instanceof Errors.NotFoundError ? true : Promise.reject(err))
   }
 
   didFindProfile() {
     return this.didFinish()
-      .then(() => this.fetchRequestInfo())
+      .then((finished) => finished ? this.fetchRequestInfo() : false)
       .then((req_info) => {
-        if(req_info.status != 'complete') return Promise.reject(new ProfileRequestSDK.RequestStatusError())
-        if(req_info.data.info.error) return Promise.reject(new ProfileRequestSDK.ProfileInfoError())
-
-        return Promise.resolve()
+        return req_info.status == 'complete' && !req_info.data.info.error
       })
+      .catch((err) => err instanceof Errors.NotFoundError ? false : Promise.reject(err))
   }
 
   profileInfo() {
@@ -85,9 +83,5 @@ class ProfileRequestSDK extends BaseSDK {
       })
   }
 }
-
-ProfileRequestSDK.NotFinishedError = createError('CrystalSDK.Profile.Request.NotFinishedError')
-ProfileRequestSDK.RequestStatusError = createError('CrystalSDK.Profile.Request.RequestStatusError')
-ProfileRequestSDK.ProfileInfoError = createError('CrystalSDK.Profile.Request.ProfileInfoError')
 
 export default ProfileRequestSDK
