@@ -155,7 +155,6 @@ CrystalSDK.key = "OrgToken"
 const query = { first_name: "Drew", ... }
 
 // Pull out the Profile Request ID (string)
-
 CrystalSDK.Profile.Request.fromSearch(query)
   .then((request) => {
 
