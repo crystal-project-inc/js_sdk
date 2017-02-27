@@ -1,7 +1,7 @@
 Crystal Javascript SDK
 ======================
-[![CircleCI branch](https://img.shields.io/circleci/project/crystal-project-inc/sdk/master.svg)]()
-[![codecov.io](https://codecov.io/github/crystal-project-inc/sdk/coverage.svg?branch=master)](https://codecov.io/github/crystal-project-inc/sdk?branch=master)
+[![CircleCI](https://circleci.com/gh/crystal-project-inc/js_sdk.svg?style=shield)](https://circleci.com/gh/crystal-project-inc/js_sdk)
+[![codecov.io](https://codecov.io/github/crystal-project-inc/sdk/coverage.svg?branch=master)](https://codecov.io/github/crystal-project-inc/js_sdk?branch=master)
 
 Provides access to Crystal, the world's largest and most accurate personality database!
 
