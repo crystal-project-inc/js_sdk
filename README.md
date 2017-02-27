@@ -31,6 +31,12 @@ Here's how to install it:
 $ npm install --save crystal_sdk
 ```
 
+Alternatively, you can embed it in a page:
+
+```html
+<script src="https://cdn.crystalknows.com/sdk_1_0.min.js" type="text/javascript"></script>
+```
+
 Here's how you use it:
 
 ## Synchronous Flow (Recommended)
