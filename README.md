@@ -88,28 +88,28 @@ When requesting large amounts of profiles, or when wanting to have more fine-gra
 The option we use internally in the SDK, is to poll for request information periodically until a set timeout has been reached:
 
 ```js
-# This example uses bluebird promises
+// This example uses bluebird promises
 import Promise from 'bluebird'
 import CrystalSDK from 'crystal_sdk'
 
-# Decided on retry limit and time between polls
+// Decided on retry limit and time between polls
 const PAUSE_IN_SECS = 3
 const TIME_LIMIT = 30
 
-# Set your Organization Access Token
+// Set your Organization Access Token
 CrystalSDK.key = "OrgToken"
 
-# Prepare the time limit logic
+// Prepare the time limit logic
 const timedOut = new Promise((resolve, reject) => {
   setTimeout(reject, TIME_LIMIT * 1000))
 })
 
-# Prepare the 'sleep' logic
+// Prepare the 'sleep' logic
 const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-# Prepare the polling logic
+// Prepare the polling logic
 const poll = (searchReq) => {
   return searchReq.didFinish()
     .then((finished) => (
@@ -120,7 +120,7 @@ const poll = (searchReq) => {
 }
 
 
-# Start the request
+// Start the request
 const query = { first_name: "Drew", ... }
 const searchPromise = CrystalSDK.Profile.Request.fromSearch(query)
   .then(poll)
