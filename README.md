@@ -90,7 +90,51 @@ CrystalSDK.Profile.search({
 
 When requesting large amounts of profiles, or when wanting to have more fine-grained control over performance, we recommend using our asynchronous flow. It allows us to process your requests in parallel and get the information back to you more quickly. There are a couple options for using this capability.
 
-### Option 1: Polling (Small Lists + Realtime Enrichment)
+### Option 1: Background Processing (Large Lists + Passive Enrichment)
+
+Sometimes, it isn't important to have the profile information immediately. Especially when dealing with larger jobs or passive data enrichment. In that case, we allow you to save the Request ID and pull information from the request at a later time via this ID.
+
+```js
+// This example uses bluebird promises
+import Promise from 'bluebird'
+import CrystalSDK from 'crystal_sdk'
+
+// Set your Organization Access Token
+CrystalSDK.key = "OrgToken"
+
+// Send the request to Crystal
+const query = { first_name: "Drew", ... }
+
+// Pull out the Profile Request ID (string)
+CrystalSDK.Profile.Request.fromSearch(query)
+  .then((request) => {
+
+    // Pull out the Request ID
+    const profileRequestID = requestProfile.id
+
+    // Save the Request ID somewhere (DB, Queue, Hard Drive..)
+    ...
+  })
+
+// Later, pull up the Request ID and pull information about it
+const savedReq = new CrystalSDK.Profile.Request(profileRequestID)
+
+savedReq.didFinish()
+  .then((finished) => (
+    finished ?
+    savedReq.profileInfo() :
+    Promise.reject('Request not finished')
+  ))
+  .then((profile) => {
+    ...
+  })
+  .catch((err) => console.log("No profile found:", err))
+```
+
+We try and store your request for a few days after the request has been started. Your Request ID should work when you try to pull information from it for at least that period of time!
+
+### Option 2: Polling (Small Lists + Realtime Enrichment)
+
 The option we use internally in the SDK, is to poll for request information periodically until a set timeout has been reached:
 
 ```js
@@ -143,50 +187,6 @@ Promise.race([timedOut, searchPromise])
 Polling can be extended to poll for multiple profiles. It gives the efficiency of our parallel processing, while writing code that behaves synchronously.
 
 This option is great if you want information as fast as possible while keeping open network connections and code complexity to a minimum. It is especially useful if you are requesting multiple profiles and can process the profiles one at a time, as each individual profile comes in (as opposed to waiting for all of them to come in before processing anything).
-
-
-### Option 2: Background Processing (Large Lists + Passive Enrichment)
-
-Sometimes, it isn't important to have the profile information immediately. Especially when dealing with larger jobs or passive data enrichment. In that case, we allow you to save the Request ID and pull information from the request at a later time via this ID.
-
-```js
-// This example uses bluebird promises
-import Promise from 'bluebird'
-import CrystalSDK from 'crystal_sdk'
-
-// Set your Organization Access Token
-CrystalSDK.key = "OrgToken"
-
-// Send the request to Crystal
-const query = { first_name: "Drew", ... }
-
-// Pull out the Profile Request ID (string)
-CrystalSDK.Profile.Request.fromSearch(query)
-  .then((request) => {
-
-    # Pull out the Request ID
-    const profileRequestID = requestProfile.id
-
-    # Save the Request ID somewhere (to a database or background job, for example)
-    ...
-  })
-
-// Later, pull up the Request ID and pull information about it
-const savedReq = new CrystalSDK.Profile.Request(profileRequestID)
-
-savedReq.didFinish()
-  .then((finished) => (
-    finished ?
-    savedReq.profileInfo() :
-    Promise.reject('Request not finished')
-  ))
-  .then((profile) => {
-    ...
-  })
-  .catch((err) => console.log("No profile found:", err))
-```
-
-We try and store your request for a few days after the request has been started. Your Request ID should work when you try to pull information from it for at least that period of time!
 
 
 ## Contributing
