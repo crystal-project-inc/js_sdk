@@ -160,8 +160,12 @@ const TIME_LIMIT = 30
 CrystalSDK.key = "OrgToken"
 
 // Prepare the time limit logic
+let stop = false
 const timedOut = new Promise((resolve, reject) => {
-  setTimeout(reject, TIME_LIMIT * 1000)
+  setTimeout(() => {
+    stop = true
+    reject()
+  }, TIME_LIMIT * 1000)
 })
 
 // Prepare the 'sleep' logic
@@ -183,7 +187,7 @@ const poll = (searchReq) => {
 // Start the request
 const query = { first_name: "Drew", ... }
 const searchPromise = CrystalSDK.Profile.Request.fromSearch(query)
-  .then(poll)
+  .then((req) => stop ? Promise.reject() : poll(req))
   .then((pd) => new CrystalSDK.Profile(pd.info, pd.recommendations))
 
 // Wait for the response or a timeout

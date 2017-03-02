@@ -22,8 +22,11 @@ class ProfileSDK extends BaseSDK {
     const PAUSE_IN_SECS = 3
 
     let req
+    let stop = false
     let timedOut = new Promise((resolve, reject) => {
       setTimeout(() => {
+        stop = true
+        
         if(req) {
           const error = new ProfileSDK.NotFoundYetError(
             `Profile not found within time limit: ${req.id}`,
@@ -48,7 +51,7 @@ class ProfileSDK extends BaseSDK {
 
 
     const searchPromise = ProfileSDK.Request.fromSearch(query)
-      .then(poll)
+      .then((req) => stop ? Promise.reject() : poll(req))
       .then((pd) => new ProfileSDK(pd.info, pd.recommendations))
 
     return Promise.race([searchPromise, timedOut])
