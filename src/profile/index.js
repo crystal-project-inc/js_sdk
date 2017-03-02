@@ -8,7 +8,7 @@ const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const POLL_PAUSE_IN_SECONDS = 2
+const MAX_POLLS = 10
 
 class ProfileSDK extends BaseSDK {
   constructor(info, recommendations) {
@@ -24,41 +24,30 @@ class ProfileSDK extends BaseSDK {
   }
 
   static search(query, timeout = 30) {
-    const PAUSE_IN_SECS = 3
-
-    let req
-    let stop = false
-    let timedOut = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        stop = true
-
-        if(req) {
-          const error = new ProfileSDK.NotFoundYetError(
-            `Profile not found within time limit: ${req.id}`,
-            {request: req}
-          )
-
-          reject(error)
-        } else reject(new ProfileSDK.InitialRequestTimeoutError())
-      }, timeout * 1000)
-    })
+    let pollsLeft = MAX_POLLS
 
     const poll = (searchReq) => {
-      req = searchReq
+      if(!pollsLeft || pollsLeft <= 0) {
+        const error = new ProfileSDK.NotFoundYetError(
+          `Profile not found within time limit: ${searchReq.id}`,
+          {request: searchReq}
+        )
+
+        throw error
+      }
+      pollsLeft -= 1
 
       return searchReq.didFinish()
         .then((finished) => (
           finished ?
           ProfileSDK.fromRequest(searchReq) :
-          sleep(PAUSE_IN_SECS * 1000).then(() => poll(searchReq))
+          sleep((timeout / MAX_POLLS) * 1000).then(() => poll(searchReq))
         ))
     }
 
 
-    const searchPromise = ProfileSDK.Request.fromSearch(query)
-      .then((req) => stop ? Promise.reject() : poll(req))
-
-    return Promise.race([searchPromise, timedOut])
+    return ProfileSDK.Request.fromSearch(query)
+      .then(poll)
   }
 }
 

@@ -55,6 +55,7 @@ describe('ProfileSDK', () => {
       it('should throw NotFoundYetError', (done) => {
         let mock = sinon.mock(req)
         mock.expects("didFinish")
+          .atLeast(1)
           .returns(Promise.resolve(false))
 
         ProfileSDK.search({}, 0.01).catch((err) => {

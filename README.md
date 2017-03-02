@@ -153,20 +153,11 @@ const Promise = require('bluebird')
 const CrystalSDK = require('crystal_sdk')
 
 // Decided on retry limit and time between polls
-const PAUSE_IN_SECS = 3
 const TIME_LIMIT = 30
+const MAX_POLLS = 10
 
 // Set your Organization Access Token
 CrystalSDK.key = "OrgToken"
-
-// Prepare the time limit logic
-let stop = false
-const timedOut = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    stop = true
-    reject()
-  }, TIME_LIMIT * 1000)
-})
 
 // Prepare the 'sleep' logic
 const sleep = (ms) => {
@@ -174,12 +165,18 @@ const sleep = (ms) => {
 }
 
 // Prepare the polling logic
+let pollsLeft = MAX_POLLS
 const poll = (searchReq) => {
+  if(!pollsLeft || pollsLeft <= 0) {
+    return Promise.reject(new Error('Max polls exceeded'))
+  }
+  pollsLeft -= 1
+
   return searchReq.didFinish()
     .then((finished) => (
       finished ?
       CrystalSDK.Profile.fromRequest(searchReq) :
-      sleep(PAUSE_IN_SECS * 1000).then(() => poll(searchReq))
+      sleep((TIME_LIMIT / MAX_POLLS) * 1000).then(() => poll(searchReq))
     ))
 }
 
@@ -187,10 +184,10 @@ const poll = (searchReq) => {
 // Start the request
 const query = { first_name: "Drew", ... }
 const searchPromise = CrystalSDK.Profile.Request.fromSearch(query)
-  .then((req) => stop ? Promise.reject() : poll(req))
+  .then(poll)
 
 // Wait for the response or a timeout
-Promise.race([timedOut, searchPromise])
+searchPromise
   .then((profile) => {
     ...
   })
