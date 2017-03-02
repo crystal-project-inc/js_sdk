@@ -13,11 +13,11 @@ This library provides access to Crystal, the world's largest and most accurate p
 #### Want to use our raw API?
 
 Find the docs here:
-https://developers.crystalknows.com
+https://developers.crystalknows.com/
 
 #### Want to learn more about us?
 
-Visit our website: https://www.crystalknows.com
+Visit our website: https://www.crystalknows.com/
 
 #### Need an Organization Access Token?
 
@@ -42,7 +42,7 @@ Here's how you use it:
 ## Synchronous Flow (Recommended)
 
 ```js
-import CrystalSDK from 'crystal_sdk'
+const CrystalSDK = require('crystal_sdk')
 
 // Set your Organization Access Token
 CrystalSDK.key = "OrgApiKey"
@@ -61,11 +61,21 @@ CrystalSDK.Profile.search({
     console.log("Profile found!")
     console.log("First Name:", profile.info.first_name)
     console.log("Last Name:", profile.info.last_name)
-    console.log("Predicted DISC Type:", profile.info.disc_type)
-    console.log("Prediction Confidence:", profile.info.confidence)
-    console.log("Personality Overview:", profile.info.overview)
+    console.log("Predicted DISC Type:", profile.info.disc_scores.type)
+    console.log("Prediction Confidence:", profile.info.disc_scores.confidence)
+    console.log("DISC Image:", profile.info.disc_image)
 
-    console.log("Recommendations:", profile.recommendations)
+    console.log("Personality Overview:", profile.recommendations.overview)
+    console.log("Personality Qualities:", profile.recommendations.qualities)
+
+    console.log("Likely motivations:", profile.recommendations.motivations)
+    console.log("Likely behaviors:", profile.recommendations.behavior)
+
+    console.log("Tips on emailing:", profile.recommendations.emailing)
+    console.log("Tips on communication:", profile.recommendations.communication)
+    console.log("Tips on building trust:", profile.recommendations.building_trust)
+    console.log("Tips on selling:", profile.recommendations.selling)
+    console.log("Tips on working together:", profile.recommendations.working_together)
 
   })
   .catch(CrystalSDK.Profile.NotFoundYetError, (err) => {
@@ -96,8 +106,8 @@ Sometimes, it isn't important to have the profile information immediately. Espec
 
 ```js
 // This example uses bluebird promises
-import Promise from 'bluebird'
-import CrystalSDK from 'crystal_sdk'
+const Promise = require('bluebird')
+const CrystalSDK = require('crystal_sdk')
 
 // Set your Organization Access Token
 CrystalSDK.key = "OrgToken"
@@ -107,10 +117,10 @@ const query = { first_name: "Drew", ... }
 
 // Pull out the Profile Request ID (string)
 CrystalSDK.Profile.Request.fromSearch(query)
-  .then((request) => {
+  .then((profileRequest) => {
 
     // Pull out the Request ID
-    const profileRequestID = requestProfile.id
+    const profileRequestID = profileRequest.id
 
     // Save the Request ID somewhere (DB, Queue, Hard Drive..)
     ...
@@ -139,8 +149,8 @@ The option we use internally in the SDK, is to poll for request information peri
 
 ```js
 // This example uses bluebird promises
-import Promise from 'bluebird'
-import CrystalSDK from 'crystal_sdk'
+const Promise = require('bluebird')
+const CrystalSDK = require('crystal_sdk')
 
 // Decided on retry limit and time between polls
 const PAUSE_IN_SECS = 3
@@ -151,7 +161,7 @@ CrystalSDK.key = "OrgToken"
 
 // Prepare the time limit logic
 const timedOut = new Promise((resolve, reject) => {
-  setTimeout(reject, TIME_LIMIT * 1000))
+  setTimeout(reject, TIME_LIMIT * 1000)
 })
 
 // Prepare the 'sleep' logic
@@ -181,7 +191,7 @@ Promise.race([timedOut, searchPromise])
   .then((profile) => {
     ...
   })
-  .catch(() => console.log("No profile found..."))
+  .catch((err) => console.log("No profile found:", err))
 ```
 
 Polling can be extended to poll for multiple profiles. It gives the efficiency of our parallel processing, while writing code that behaves synchronously.

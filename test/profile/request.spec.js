@@ -28,7 +28,7 @@ describe('ProfileSDK.RequestSDK', () => {
 
   describe('.fromSearch', () => {
     let query = {is_some: 'query'}
-    let endpoint = 'profile_search/async'
+    let endpoint = 'profiles/async'
     let request_type = 'post'
 
     context('ApiSDK.makeRequest threw an error', () => {
@@ -69,7 +69,7 @@ describe('ProfileSDK.RequestSDK', () => {
   })
 
   describe('#fetchRequestInfo', () => {
-    let endpoint = 'results/some_id'
+    let endpoint = 'profiles/results/some_id'
     let request_type = 'get'
 
     context('cached_req_info exists', () => {
@@ -396,10 +396,10 @@ describe('ProfileSDK.RequestSDK', () => {
         })
       })
 
-      context('#fetchRequestInfo returned req_info.data.info.error', () => {
+      context('#fetchRequestInfo returned req_info.info.error', () => {
         beforeEach(() => {
           let mock = sinon.mock(req)
-          let info = {status: 'complete', data: {info: {error: 'some_error'}}}
+          let info = {status: 'complete', info: {error: 'some_error'}}
 
           mock.expects('fetchRequestInfo').once()
             .returns(Promise.resolve(info))
@@ -417,7 +417,7 @@ describe('ProfileSDK.RequestSDK', () => {
       context('#fetchRequestInfo returned no errors', () => {
         beforeEach(() => {
           let mock = sinon.mock(req)
-          let info = {status: 'complete', data: {info: {}}}
+          let info = {status: 'complete', info: {}}
 
           mock.expects('fetchRequestInfo').once()
             .returns(Promise.resolve(info))
@@ -477,10 +477,10 @@ describe('ProfileSDK.RequestSDK', () => {
       context('#fetchRequestInfo resolved with info', () => {
         beforeEach(() => {
           let mock = sinon.mock(req)
-          let req_info = {data: {
+          let req_info = {
             info: {some: 'info'},
             recommendations: {some: 'recs'}
-          }}
+          }
 
           mock.expects('fetchRequestInfo').once()
             .returns(Promise.resolve(req_info))

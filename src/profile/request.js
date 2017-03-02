@@ -11,7 +11,7 @@ class ProfileRequestSDK extends BaseSDK {
   }
 
   static fromSearch(query) {
-    return ApiSDK.makeRequest('post', 'profile_search/async', query)
+    return ApiSDK.makeRequest('post', 'profiles/async', query)
       .then((resp) => {
         return new ProfileRequestSDK(resp.body.request_id)
       })
@@ -37,7 +37,7 @@ class ProfileRequestSDK extends BaseSDK {
   fetchRequestInfo() {
     if(this.cached_req_info) return Promise.resolve(this.cached_req_info)
 
-    return ApiSDK.makeRequest('get', `results/${this.id}`)
+    return ApiSDK.makeRequest('get', `profiles/results/${this.id}`)
       .then((resp) => {
         const body = resp.body
         if(body.status == 'complete' || body.status == 'error') {
@@ -67,7 +67,7 @@ class ProfileRequestSDK extends BaseSDK {
     return this.didFinish()
       .then((finished) => finished ? this.fetchRequestInfo() : false)
       .then((req_info) => {
-        return req_info.status == 'complete' && !req_info.data.info.error
+        return req_info.status == 'complete' && !req_info.info.error
       })
       .catch((err) => err instanceof Errors.NotFoundError ? false : Promise.reject(err))
   }
@@ -76,8 +76,8 @@ class ProfileRequestSDK extends BaseSDK {
     return this.didFindProfile()
       .then(() => this.fetchRequestInfo())
       .then((req_info) => {
-        const profile_info = req_info.data.info
-        const recommendations = req_info.data.recommendations
+        const profile_info = req_info.info
+        const recommendations = req_info.recommendations
 
         return {info: profile_info, recommendations: recommendations}
       })
