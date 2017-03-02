@@ -132,7 +132,7 @@ const savedReq = new CrystalSDK.Profile.Request(profileRequestID)
 savedReq.didFinish()
   .then((finished) => (
     finished ?
-    savedReq.profileInfo() :
+    CrystalSDK.Profile.fromRequest(savedReq) :
     Promise.reject('Request not finished')
   ))
   .then((profile) => {
@@ -178,7 +178,7 @@ const poll = (searchReq) => {
   return searchReq.didFinish()
     .then((finished) => (
       finished ?
-      searchReq.profileInfo() :
+      CrystalSDK.Profile.fromRequest(searchReq) :
       sleep(PAUSE_IN_SECS * 1000).then(() => poll(searchReq))
     ))
 }
@@ -188,7 +188,6 @@ const poll = (searchReq) => {
 const query = { first_name: "Drew", ... }
 const searchPromise = CrystalSDK.Profile.Request.fromSearch(query)
   .then((req) => stop ? Promise.reject() : poll(req))
-  .then((pd) => new CrystalSDK.Profile(pd.info, pd.recommendations))
 
 // Wait for the response or a timeout
 Promise.race([timedOut, searchPromise])

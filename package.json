@@ -1,6 +1,6 @@
 {
   "name": "crystal_sdk",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Javascript SDK version of the Crystal Connect API",
   "main": "dist/sdk.js",
   "files": [
