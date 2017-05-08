@@ -79,7 +79,7 @@ class ProfileRequestSDK extends BaseSDK {
         const profile_info = req_info.info
         const recommendations = req_info.recommendations
 
-        return {info: profile_info, recommendations: recommendations}
+        return { info: profile_info, recommendations: recommendations, id: this.id }
       })
   }
 }

@@ -11,16 +11,17 @@ const sleep = (ms) => {
 const MAX_POLLS = 10
 
 class ProfileSDK extends BaseSDK {
-  constructor(info, recommendations) {
+  constructor(info, recommendations, id) {
     super()
 
     this.info = info
     this.recommendations = recommendations
+    this.id = id
   }
 
   static fromRequest(request) {
     return request.profileInfo()
-      .then((pd) => new ProfileSDK(pd.info, pd.recommendations))
+      .then((pd) => new ProfileSDK(pd.info, pd.recommendations, pd.id))
   }
 
   static search(query, timeout = 30) {
