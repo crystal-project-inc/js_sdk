@@ -1,7 +1,7 @@
 import BaseSDK from '../base'
 import ApiSDK from '../api'
 import RequestSDK from './request'
-import * as Errors from './errors'
+import * as Errors from './../errors'
 import Promise from 'bluebird'
 
 const sleep = (ms) => {
@@ -29,7 +29,7 @@ class ProfileSDK extends BaseSDK {
 
     const poll = (searchReq) => {
       if(!pollsLeft || pollsLeft <= 0) {
-        const error = new ProfileSDK.NotFoundYetError(
+        const error = new Errors.NotFoundYetError(
           `Profile not found within time limit: ${searchReq.id}`,
           {request: searchReq}
         )
@@ -54,10 +54,5 @@ class ProfileSDK extends BaseSDK {
 
 ProfileSDK.Request = RequestSDK
 
-ProfileSDK.InitialRequestTimeoutError = Errors.InitialRequestTimeoutError
-ProfileSDK.NotFoundError = Errors.NotFoundError
-ProfileSDK.NotFoundYetError = Errors.NotFoundYetError
-ProfileSDK.NotAuthedError = Errors.NotAuthedError
-ProfileSDK.RateLimitHitError = Errors.RateLimitHitError
-
 export default ProfileSDK
+
