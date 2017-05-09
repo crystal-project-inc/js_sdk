@@ -10,7 +10,7 @@ class EmailSampleSDK extends BaseSDK {
   }
 
   static all(args={}) {
-    return ApiSDK.makeRequest('post', `emails/${args.request_id}`)
+    return ApiSDK.makeRequest('get', `emails/${args.request_id}`)
       .then((resp) => {
         return resp.body;
       })
