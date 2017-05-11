@@ -25,17 +25,17 @@
         console.log("Recommendations:", profile.recommendations)
 
       })
-      .catch(CrystalSDK.Profile.NotFoundError, (err) => {
+      .catch(CrystalSDK.Errors.NotFoundError, (err) => {
         console.log("The personality profile was not found")
       })
-      .catch(CrystalSDK.Profile.NotFoundYetError, (err) => {
+      .catch(CrystalSDK.Errors.NotFoundYetError, (err) => {
         console.log("The personality profile was not found in time limit")
         console.log("Asynchronous Request ID:", err.request.id)
       })
-      .catch(CrystalSDK.Profile.NotAuthedError, (err) => {
+      .catch(CrystalSDK.Errors.NotAuthedError, (err) => {
         console.log("Organization token was invalid:", err.token)
       })
-      .catch(CrystalSDK.Profile.RateLimitHitError, (err) => {
+      .catch(CrystalSDK.Errors.RateLimitHitError, (err) => {
         console.log("Organiation hit the allowed rate limit")
       })
       .catch((err) => {
