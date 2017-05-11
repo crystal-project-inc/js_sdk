@@ -40,6 +40,7 @@ Alternatively, you can embed it in a page:
 Here's how you use it:
 
 ## Synchronous Flow (Recommended)
+### Profile
 
 ```js
 const CrystalSDK = require('crystal_sdk')
@@ -95,6 +96,17 @@ CrystalSDK.Profile.search({
 
   })
 ```
+### Email Samples
+```js
+CrystalSDK.EmailSample.all({ request_id: '4969f4c3-6d5e-42e1-bf73-342fe8c8a3f1' })
+  .then((samples) => {
+    console.log("Email Samples:", samples)
+  })
+  .catch((error) => {
+    console.log("Something went wrong", error)
+  })
+```
+
 
 ## Asynchronous Flow (For bulk analysis)
 
