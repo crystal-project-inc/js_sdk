@@ -1,5 +1,6 @@
 import { expect, assert } from 'chai'
 import ProfileSDK from '../../src/profile'
+import Errors from '../../src/errors'
 import ApiSDK from '../../src/api'
 import sinon from 'sinon'
 import nock from 'nock'
@@ -268,7 +269,7 @@ describe('ProfileSDK.RequestSDK', () => {
       beforeEach(() => {
         let mock = sinon.mock(req)
         mock.expects('fetchStatus').once()
-          .returns(Promise.reject(new ProfileSDK.NotFoundError()))
+          .returns(Promise.reject(new Errors.NotFoundError()))
       })
 
       it('should resolve to true', (done) => {
@@ -283,12 +284,12 @@ describe('ProfileSDK.RequestSDK', () => {
       beforeEach(() => {
         let mock = sinon.mock(req)
         mock.expects('fetchStatus').once()
-          .returns(Promise.reject(new ProfileSDK.NotAuthedError()))
+          .returns(Promise.reject(new Errors.NotAuthedError()))
       })
 
       it('should not suppress it', (done) => {
         req.didFinish().catch((err) => {
-          expect(err).to.be.an.instanceof(ProfileSDK.NotAuthedError)
+          expect(err).to.be.an.instanceof(Errors.NotAuthedError)
           done()
         })
       })
@@ -316,7 +317,7 @@ describe('ProfileSDK.RequestSDK', () => {
       beforeEach(() => {
         let mock = sinon.mock(req)
         mock.expects('didFinish').once()
-          .returns(Promise.reject(new ProfileSDK.NotFoundError()))
+          .returns(Promise.reject(new Errors.NotFoundError()))
       })
 
       it('should resolve to false', (done) => {
@@ -331,12 +332,12 @@ describe('ProfileSDK.RequestSDK', () => {
       beforeEach(() => {
         let mock = sinon.mock(req)
         mock.expects('didFinish').once()
-          .returns(Promise.reject(new ProfileSDK.NotAuthedError()))
+          .returns(Promise.reject(new Errors.NotAuthedError()))
       })
 
       it('should not suppress it', (done) => {
         req.didFindProfile().catch((err) => {
-          expect(err).to.be.an.instanceof(ProfileSDK.NotAuthedError)
+          expect(err).to.be.an.instanceof(Errors.NotAuthedError)
           done()
         })
       })
@@ -501,27 +502,27 @@ describe('ProfileSDK.RequestSDK', () => {
   describe('.checkError', () => {
     it('should raise NotAuthedError if statusCode is 401', (done) => {
       try {
-        ProfileSDK.Request.checkError({statusCode: 401})
+        Errors.checkError({statusCode: 401})
       } catch (err) {
-        expect(err instanceof ProfileSDK.NotAuthedError).to.eql(true)
+        expect(err instanceof Errors.NotAuthedError).to.eql(true)
         done()
       }
     })
 
     it('should raise NotFoundError if statusCode is 404', (done) => {
       try {
-        ProfileSDK.Request.checkError({statusCode: 404})
+        Errors.checkError({statusCode: 404})
       } catch (err) {
-        expect(err instanceof ProfileSDK.NotFoundError).to.eql(true)
+        expect(err instanceof Errors.NotFoundError).to.eql(true)
         done()
       }
     })
 
     it('should raise RateLimitHitError if statusCode is 429', (done) => {
       try {
-        ProfileSDK.Request.checkError({statusCode: 429})
+        Errors.checkError({statusCode: 429})
       } catch (err) {
-        expect(err instanceof ProfileSDK.RateLimitHitError).to.eql(true)
+        expect(err instanceof Errors.RateLimitHitError).to.eql(true)
         done()
       }
     })

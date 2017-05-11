@@ -1,5 +1,7 @@
 import ApiSDK from './api'
 import Profile from './profile'
+import EmailSample from './email_sample'
+import Errors from './errors'
 
 class SDK {
   static get key() { return ApiSDK.OrgToken }
@@ -11,5 +13,8 @@ if(process && process.env && process.env.CRYSTAL_KEY) {
 }
 
 SDK.Profile = Profile
+SDK.EmailSample = EmailSample
+SDK.Errors = Errors
 
 module.exports = SDK
+
