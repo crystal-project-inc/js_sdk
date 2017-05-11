@@ -79,15 +79,15 @@ CrystalSDK.Profile.search({
     console.log("Tips on working together:", profile.recommendations.working_together)
 
   })
-  .catch(CrystalSDK.Profile.NotFoundYetError, (err) => {
+  .catch(CrystalSDK.Errors.NotFoundYetError, (err) => {
     console.log("Profile was not found in time limit: ", err.request.id)
 
   })
-  .catch(CrystalSDK.Profile.NotFoundError, (err) => {
+  .catch(CrystalSDK.Errors.NotFoundError, (err) => {
     console.log("Profile was not found")
 
   })
-  .catch(CrystalSDK.Profile.NotAuthedError, (err) => {
+  .catch(CrystalSDK.Errors.NotAuthedError, (err) => {
     console.log("The organization token is not valid:", err.token)
 
   })
