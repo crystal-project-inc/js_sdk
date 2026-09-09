@@ -1,3 +1,21 @@
+> # ⚠️ Deprecated and unmaintained
+>
+> This SDK targets a retired version of the Crystal API (the ~2017 "Crystal
+> Connect" `/v1` surface) and **does not work with the current Crystal
+> Personality API.** It is kept only for historical reference.
+>
+> The Personality API is now **self-serve** — there is no "Organization
+> Access Token" and nothing to email sales for.
+>
+> - **Docs / API reference:** https://data.crystalknows.com/docs
+> - **Machine-readable reference (for AI agents):** https://data.crystalknows.com/llms-full.txt
+> - **Get an API key:** https://data.crystalknows.com/api-keys
+> - **Overview:** https://www.crystalknows.com/personality-api
+>
+> The npm package `crystal_sdk` is likewise deprecated.
+
+---
+
 Crystal Javascript SDK
 ======================
 [![CircleCI](https://circleci.com/gh/crystal-project-inc/js_sdk.svg?style=shield)](https://circleci.com/gh/crystal-project-inc/js_sdk)
